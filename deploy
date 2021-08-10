@@ -2,30 +2,26 @@
 rm -rf .next out
 npm run build
 npm run export
-mv ./out/next ./out/next
+mv ./out/_next ./out/next
 cd ./out 
 
  #rename all paths containing next to next
 if [[ $OSTYPE == 'darwin'* ]]; then
   #echo 'macOS'
-  grep -rli 'next' * | xargs -I@ sed -i '' 's/next/next/g' @
+  grep -rli --exclude="deploy" '_next' * | xargs -I@ sed -i '' 's/_next/next/g' @
 else
     #echo 'LINUX'
-    grep -rli 'next' | xargs  sed -i 's/next/next/g'
+    grep -rli --exclude="deploy" '_next' | xargs  sed -i 's/_next/next/g'
 fi
 
 #remove all paths inside files starting with /_ to /
 if [[ $OSTYPE == 'darwin'* ]]; then
   #echo 'macOS'
-  grep -rli '/_'  * | xargs -I@ sed -i '' 's/\/_/\//g' @
+  grep -rli --exclude="deploy" '/_'  * | xargs -I@ sed -i '' 's/\/_/\//g' @
 else
   #echo 'LINUX'
-  grep -rli '/_' | xargs  sed -i 's/\/_/\//g'
+  grep -rli --exclude="deploy" '/_' | xargs  sed -i 's/\/_/\//g'
 fi
-
-
-
-
 
 
 #rename all files starting with _ to remove it.
@@ -36,7 +32,3 @@ cp -rf ./out/* .
 git add .
 git commit -m "$1"  
 git push
-
-
-#For mac grep command to work 
-grep -rli 'next' * | xargs -I@ sed -i '' 's/next/next/g' @
