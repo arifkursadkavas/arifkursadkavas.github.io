@@ -9,7 +9,7 @@ cd ./out
 if [[ $OSTYPE == 'darwin'* ]]; then
   #echo 'macOS'
   grep -rli '_next' * | xargs -I@ sed -i '' 's/_next/next/g' @
-elif
+else
     #echo 'LINUX'
     grep -rli '_next' | xargs  sed -i 's/_next/next/g'
 fi
@@ -18,7 +18,7 @@ fi
 if [[ $OSTYPE == 'darwin'* ]]; then
   #echo 'macOS'
   grep -rli '/_'  * | xargs -I@ sed -i '' 's/\/_/\//g' @
-elif
+else
   #echo 'LINUX'
   grep -rli '/_' | xargs  sed -i 's/\/_/\//g'
 fi

@@ -27,6 +27,9 @@ class HashgeshApp extends App {
 
     componentDidMount(){
         ReactGA.initialize('UA-108070842-2');
+
+        ReactGA.set({ page: 'index.html' }); // Update the user's current page
+        ReactGA.pageview('index.html'); // Record a pageview for the given page
      
         Router.events.on('routeChangeStart', (route:string)=>{
             ReactGA.set({ page: route }); // Update the user's current page
