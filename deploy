@@ -6,10 +6,27 @@ mv ./out/_next ./out/next
 cd ./out 
 
  #rename all paths containing _next to next
-grep -rli '_next' | xargs  sed -i 's/_next/next/g'
+if [[ $OSTYPE == 'darwin'* ]]; then
+  #echo 'macOS'
+  grep -rli '_next' * | xargs -I@ sed -i '' 's/_next/next/g' @
+elif
+    #echo 'LINUX'
+    grep -rli '_next' | xargs  sed -i 's/_next/next/g'
+fi
 
 #remove all paths inside files starting with /_ to /
-grep -rli '/_' | xargs  sed -i 's/\/_/\//g'
+if [[ $OSTYPE == 'darwin'* ]]; then
+  #echo 'macOS'
+  grep -rli '/_'  * | xargs -I@ sed -i '' 's/\/_/\//g' @
+elif
+  #echo 'LINUX'
+  grep -rli '/_' | xargs  sed -i 's/\/_/\//g'
+fi
+
+
+
+
+
 
 #rename all files starting with _ to remove it.
 for i in $(find . -iname '_*') ; do mv $i $(echo $i | sed -e "s/_//"); done 
@@ -19,3 +36,7 @@ cp -rf ./out/* .
 git add .
 git commit -m "$1"  
 git push
+
+
+#For mac grep command to work 
+grep -rli '_next' * | xargs -I@ sed -i '' 's/_next/next/g' @
