@@ -2,16 +2,16 @@
 rm -rf .next out
 npm run build
 npm run export
-mv ./out/_next ./out/next
+mv ./out/next ./out/next
 cd ./out 
 
- #rename all paths containing _next to next
+ #rename all paths containing next to next
 if [[ $OSTYPE == 'darwin'* ]]; then
   #echo 'macOS'
-  grep -rli '_next' * | xargs -I@ sed -i '' 's/_next/next/g' @
+  grep -rli 'next' * | xargs -I@ sed -i '' 's/next/next/g' @
 else
     #echo 'LINUX'
-    grep -rli '_next' | xargs  sed -i 's/_next/next/g'
+    grep -rli 'next' | xargs  sed -i 's/next/next/g'
 fi
 
 #remove all paths inside files starting with /_ to /
@@ -39,4 +39,4 @@ git push
 
 
 #For mac grep command to work 
-grep -rli '_next' * | xargs -I@ sed -i '' 's/_next/next/g' @
+grep -rli 'next' * | xargs -I@ sed -i '' 's/next/next/g' @
