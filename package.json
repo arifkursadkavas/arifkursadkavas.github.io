@@ -18,7 +18,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-sass": "^1.0.1",
-    "axios": "0.21.1",
+    "axios": "0.21.2",
     "css-loader": "^3.6.0",
     "file-loader": "^6.2.0",
     "history": "^5.0.0",
