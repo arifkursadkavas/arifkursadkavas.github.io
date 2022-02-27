@@ -8,7 +8,7 @@ const Education = (props) => {
       <Card
         jobTitle='M.Sc Electronics Engineering'
         companyName='Istanbul Technical University'
-        duration='09-2003 - 07-2006'
+        duration=''
         techStack={[
           'Matlab',
           'Digital Signal Processing',
@@ -23,12 +23,12 @@ const Education = (props) => {
         a GMSK modem with one bit differential detection. Aimed to be used on AIS for the sea vessels.',
         ]}
         companyUrl='https://itu.edu.tr'
-        location='Istanbul/Turkey'
+        location=''
       ></Card>
       <Card
         jobTitle='B.Sc Electronics Engineering'
         companyName='Yeditepe University'
-        duration='09-1999 - 07-2003'
+        duration=''
         techStack={[
           'High Frequeny Electronics',
           'Logic Circuits',
@@ -40,15 +40,15 @@ const Education = (props) => {
           'Graduation work was about design of a twin tee notch filter for S3 signalling system',
         ]}
         companyUrl='https://yeditepe.edu.tr'
-        location='Istanbul/Turkey'
+        location=''
       ></Card>
       <Card
         jobTitle='High School'
         companyName='Bornova Anadolu Lisesi'
-        duration='09-1996 - 06-1999'
+        duration=''
         description={['High School Education']}
         companyUrl='http://izmirbal.meb.k12.tr/'
-        location='Izmir/Turkey'
+        location=''
       ></Card>
     </div>
   );

@@ -22,7 +22,7 @@ export default function Card(props) {
             {companyName}
           </a>
           <span className='workLocation'>{location}</span>
-          <div className='workDuration'>[{duration}]</div>
+          <div className='workDuration'>{duration}</div>
         </b>
       </div>
       <div className='cardtext'>
