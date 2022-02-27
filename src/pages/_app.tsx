@@ -1,12 +1,10 @@
 import React from 'react';
 import App from 'next/app';
-import "../../styles/index.scss";
-
 import ReactGA from 'react-ga';
-
 import Sidebar from '../components/Sidebar';
 import { Router } from 'next/dist/client/router';
 
+import "../../styles/index.scss";
 
 
 class HashgeshApp extends App {
