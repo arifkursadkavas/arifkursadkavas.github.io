@@ -1,66 +1,77 @@
 .cardsList {
-  margin-left: 15%;
-  width: 60%;
-  & > div {
-    margin-top: 2em;
-  }
-}
+	& > div {
+		margin-top: 2em;
+	}
 
-.cardContainer {
-  @include card-background-color;
-  border-radius: 1em;
-  //box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
-  width: 100%;
-  padding: 2em;
-  padding-top: 1em;
-  &:hover {
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
-  }
-  &::cardtext {
-    padding: 2px 16px;
-  }
-}
+	.cardContainer {
+		@include card-background-color;
+		border-radius: 1em;
+		//box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+		transition: 0.3s;
+		padding: 2em;
+		padding-top: 1em;
+		// &:hover {
+		//   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+		// }
+		&::cardtext {
+			padding: 2px 16px;
+		}
 
-.cardHeader {
-  border-bottom: solid 1px #cecdce;
-  height: 2em;
-  & > b > a {
-    text-decoration: none;
-  }
-}
+		.cardHeader {
+			border-bottom: solid 1px #cecdce;
+			height: 2em;
+			& > b > a {
+				text-decoration: none;
+			}
+		}
 
-.cardtext {
-  & > p {
-    & > span {
-      margin-left: 1em;
-    }
-  }
+		.cardtext {
+			& > p {
+				& > span {
+					margin-left: 1em;
+				}
+			}
 
-  & > ul {
-    & > li {
-      margin-left: 1em;
-      cursor: default;
-      text-align: justify;
-      list-style: initial;
-      margin-bottom: 0.5em;
-      &:hover {
-        background: none;
-        color: black;
-      }
-    }
-  }
-}
+			& > ul {
+				& > li {
+					margin-left: 1em;
+					cursor: default;
+					text-align: justify;
+					list-style: initial;
+					margin-bottom: 0.5em;
+					&:hover {
+						background: none;
+						color: black;
+					}
+				}
+			}
 
-.techStackContainer {
-  margin-top: 1em;
+			.techStackContainer {
+				margin-top: 1em;
+			}
+		}
+	}
 }
 
 .workDuration {
-  float: right;
-  margin-right: 1em;
+	float: right;
+	margin-right: 1em;
 }
 
 .workLocation {
-  float: right;
+	float: right;
 }
+
+@media screen and (max-width: 1200px) {
+	.cardsList {
+		font-size: 0.6em;
+	}
+}
+
+
+@media screen and (max-width: 730px) {
+	.cardsList {
+		font-size: 0.5em;
+	}
+}
+

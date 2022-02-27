@@ -7,8 +7,138 @@ $headerFontColor: #ffffff;
   @include m-font-family;
   background-color: $headerBackgroundColor;
   color: $headerFontColor;
-  font-size: 3em;
-  height: 90px;
+  height: 5em;
   line-height: 90px;
-  text-align: center;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  display: flex;
+
+  .mProfilePhoto {
+    margin-left: 0.5em;
+    margin-top: 0.5em;
+    cursor: pointer;
+    width: 4em;
+    height: 4em;
+    border-radius: 10em;
+  }
+
+  .mNameContainer {
+    text-align: center;
+    margin-left: 1em;
+  
+    &>a {
+      text-decoration: none;
+      color: white;
+      bottom: 0.2em;
+      position: relative;
+    }
+  }
+
+  .mHeaderItemContainer {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    /* left: 30%; */
+    float: right;
+    right: 3%;
+    >a {
+      @include m-font-family;
+      text-decoration: none;
+    }
+    .mHeaderItem {
+      bottom: 0.2em;
+      margin-left: 3em;
+      position: relative;
+      font-size: 1em;
+      color: aliceblue;
+      cursor: pointer
+    }
+  }
+  
+
+  
+  .mHeaderBottom {
+    position: absolute;
+    bottom: 1em;
+    margin-left: 1em;
+  
+    &>a {
+      text-decoration: none;
+      color: white;
+    }
+  }
+
+}
+
+
+@media screen and (max-width: 500px) {
+  
+.mHeader {
+  @include m-font-family;
+  font-size: 0.7em;
+  background-color: $headerBackgroundColor;
+  color: $headerFontColor;
+  height: 5em;
+  line-height: 90px;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  display: flex;
+
+  .mProfilePhoto {
+    margin-left: 0.5em;
+    margin-top: 0.5em;
+    cursor: pointer;
+    width: 4em;
+    height: 4em;
+    border-radius: 10em;
+  }
+
+  .mNameContainer {
+    text-align: center;
+    margin-left: 1em;
+  
+    &>a {
+      text-decoration: none;
+      color: white;
+      bottom: 1.2em;
+      position: relative;
+    }
+  }
+
+  .mHeaderItemContainer {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    /* left: 30%; */
+    float: right;
+    right: 3%;
+    >a {
+      @include m-font-family;
+      text-decoration: none;
+    }
+    .mHeaderItem {
+      bottom: 1.2em;
+      margin-left: 3em;
+      position: relative;
+      color: aliceblue;
+      cursor: pointer
+    }
+  }
+  
+
+  
+  .mHeaderBottom {
+    position: absolute;
+    bottom: 1em;
+    margin-left: 1em;
+  
+    &>a {
+      text-decoration: none;
+      color: white;
+    }
+  }
+
+}
 }

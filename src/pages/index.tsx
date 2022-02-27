@@ -4,13 +4,12 @@ import Tag from '../components/Tag';
 
 const Index = () => {
     return (
-        <div className='cardsList' >
             <div className='aboutContainer'>
                 Hi!
-                <br /> My name is Arif. I am a fullstack software developer. I have
+                <br/> <span>My name is Arif. I am a fullstack software developer. I have
                 developed professional software using C,C++,C#, Java and utilized
                 various frontend technologies such as Angular(Js,Ts), ReactJs, Redux,
-                Scss.{' '}
+                Scss.</span> 
                 {false && <a href='mailTo:arifkavas@gmail.com'>I am open to remote roles.</a>}
                 <br />
                 <p>Skills(Experienced and currently utilized)</p>
@@ -49,7 +48,6 @@ const Index = () => {
                     ))}
                 </div>
             </div>
-        </div>
     )
 }
 
