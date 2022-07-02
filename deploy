@@ -29,6 +29,8 @@ fi
 #rename all files starting with _ to remove it.
 for i in $(find . -iname '_*') ; do mv $i $(echo $i | sed -e "s/_//"); done 
 
+cp sitemap.xml out/
+
 cd ..
 cp -rf ./out/* .
 git add .
