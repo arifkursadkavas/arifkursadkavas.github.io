@@ -67,14 +67,21 @@
 
 @media screen and (max-width: 1200px) {
 	.cardsList {
-		font-size: 0.6em;
+		.cardHeader{
+			font-size: 0.7em;
+		}
+		font-size: 0.8em;
+
 	}
 }
 
 
 @media screen and (max-width: 730px) {
 	.cardsList {
-		font-size: 0.5em;
+		.cardHeader{
+			font-size: 0.7em;
+		}
+		font-size: 0.8em;
 	}
 }
 

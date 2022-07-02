@@ -1,26 +1,33 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState } from "react";
+import Link from "next/link";
 
 export default (props) => {
-    return (
-    <div className='mHeader'>
+  return (
+    <div className="mHeader">
+      <Link href="/">
+        <a>
+          <img className="mProfilePhoto" src="./arif.jpg"></img>
+        </a>
+      </Link>
 
+      <div className="mNameContainer">
         <Link href="/">
-          <img className='mProfilePhoto' src='./arif.jpg'></img>
+          <a>Arif Kürsad Kavas</a>
         </Link>
-
-      <div className='mNameContainer'>
-        <Link href="/">Arif Kürsad Kavas </Link>
       </div>
 
-      <div className='mHeaderItemContainer'>
-            <Link href={'/experience'} key={'Experience'}>
-              <div className='mHeaderItem'>{'Experience'}</div>
-            </Link>
+      <div className="mHeaderItemContainer">
+        <Link href={"/experience"} key={"Experience"}>
+          <a>
+            <div className="mHeaderItem">{"Experience"}</div>
+          </a>
+        </Link>
 
-            <Link href={'/education'} key={'Education'}>
-              <div className='mHeaderItem'>{'Education'}</div>
-            </Link>
+        <Link href={"/education"} key={"Education"}>
+          <a>
+            <div className="mHeaderItem">{"Education"}</div>
+          </a>
+        </Link>
       </div>
     </div>
   );
