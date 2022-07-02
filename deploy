@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #npm run test
 rm -rf .next out
 npm run build
