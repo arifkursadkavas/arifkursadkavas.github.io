@@ -1,10 +1,15 @@
 import React from 'react';
 import 'isomorphic-unfetch';
 import Tag from '../components/Tag';
+import Head from 'next/head';
 
 const Index = () => {
     return (
             <div className='aboutContainer'>
+            <Head>
+				<meta name='description' content='Arif Kürsad Kavas' />
+				<meta property='og:title' content='Arif Kürsad Kavas' />
+			</Head>
                 Hi!
                 <br/><br/> <span>This is Arif. I am a fullstack software developer. I have
                 developed professional software using C,C++,C#, Java and utilized
