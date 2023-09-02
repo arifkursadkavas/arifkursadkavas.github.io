@@ -6,7 +6,7 @@ const Playlist = ()=>{
     const [songList, setSongList] = useState<Song[]>([])
 
     useEffect(()=>{
-        axios.get('http://marqop.com:5000?offset=0&count=50').then((response)=>{
+        axios.get('https://marqop.com:444?offset=0&count=50').then((response)=>{
             setSongList(response.data)
         }).catch((e)=>{
             console.log(e)
