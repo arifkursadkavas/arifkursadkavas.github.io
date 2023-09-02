@@ -5,28 +5,20 @@ export default (props) => {
   return (
     <div className="mHeader">
       <Link href="/">
-        <a>
-          <img className="mProfilePhoto" src="./arif.jpg"></img>
-        </a>
+        <img className="mProfilePhoto" src="./arif.jpg"></img>
       </Link>
 
       <div className="mNameContainer">
-        <Link href="/">
-          <a>Arif Kürsad Kavas</a>
-        </Link>
+        <Link href="/">Arif Kürsad Kavas</Link>
       </div>
 
       <div className="mHeaderItemContainer">
         <Link href={"/experience"} key={"Experience"}>
-          <a>
-            <div className="mHeaderItem">{"Experience"}</div>
-          </a>
+          <div className="mHeaderItem">{"Experience"}</div>
         </Link>
 
         <Link href={"/education"} key={"Education"}>
-          <a>
-            <div className="mHeaderItem">{"Education"}</div>
-          </a>
+          <div className="mHeaderItem">{"Education"}</div>
         </Link>
       </div>
     </div>
