@@ -1,44 +1,38 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
+import { useState } from "react";
 
-const Playlist = ()=>{
+const Playlist = ({ data }) => {
+  const [songList, setSongList] = useState<Song[]>(data);
 
-    const [songList, setSongList] = useState<Song[]>([])
+  const formatTime = (time: string) => {
+    return new Date(time).toLocaleString().toString();
+  };
 
-    useEffect(()=>{
-        axios.get('https://marqop.com:444?offset=0&count=50').then((response)=>{
-            setSongList(response.data)
-        }).catch((e)=>{
-            console.log(e)
-        })
-    },[])
+  return (
+      <table>
+        {songList &&
+          songList.map((song, idx) => {
+            return (
+              <tr key={idx}>
+                <td>{song.song}</td>
+                <td>{song.artist}</td>
+                <td>{formatTime(song.created_on)}</td>
+              </tr>
+            );
+          })}
+      </table>
+  );
+};
+export default Playlist;
 
-    const formatTime = (time:string) =>{
-       return  new Date(time).toLocaleString().toString()
-    }
-
-    return (
-      <>
-        <div className="eksenList">
-          <span>Radio Eksen Sarki Listesi</span> 
-          {songList &&
-            songList.map((song) => {
-              return (
-                <li>
-                  <span>{song.song}</span>  <span>{song.artist}</span> {" "}
-                  <span>{formatTime(song.created_on)}</span>
-                </li>
-              );
-            })}
-        </div>
-      </>
-    );
+export async function getServerSideProps() {
+  const res = await fetch("https://marqop.com:444?offset=0&count=50");
+  const data = await res.json();
+  return { props: { data } };
 }
-export default Playlist
 
-interface Song{
-    id:string,
-    artist:string
-    song:string
-    created_on:string
+interface Song {
+  id: string;
+  artist: string;
+  song: string;
+  created_on: string;
 }
