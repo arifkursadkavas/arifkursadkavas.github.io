@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const Playlist = ({ data }) => {
-  const [songList, setSongList] = useState<Song[]>(data);
+const Playlist = () => {
+  const [songList, setSongList] = useState<Song[]>([]);
+
+  useEffect(()=>{
+    fetch("https://marqop.com:444?offset=0&count=50").then(response => response.json()).then(data => {
+    setSongList(data)
+    })
+
+  },[])
 
   const formatTime = (time: string) => {
     return new Date(time).toLocaleString().toString();
@@ -24,11 +31,6 @@ const Playlist = ({ data }) => {
 };
 export default Playlist;
 
-export async function getServerSideProps() {
-  const res = await fetch("https://marqop.com:444?offset=0&count=50");
-  const data = await res.json();
-  return { props: { data } };
-}
 
 interface Song {
   id: string;
