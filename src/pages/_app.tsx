@@ -11,7 +11,7 @@ import Header from "../components/Header";
 
 const HashgeshApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
-    ReactGA.initialize("UA-108070842-2");
+    ReactGA.initialize("G-PBHF1JX21H");
 
     ReactGA.set({ page: "index.html" }); // Update the user's current page
     ReactGA.pageview("index.html"); // Record a pageview for the given page
