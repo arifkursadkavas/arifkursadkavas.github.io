@@ -11,7 +11,7 @@ const Index = () => {
 				<meta property='og:title' content='Arif Kürsad Kavas' />
 			</Head>
                 Hi!
-                <br/><br/> <span>I am a fullstack software developer with a professional experience for 20 years using various programming languages and 
+                <br/><br/> <span>I am a fullstack software developer with a professional experience for over 20 years using various programming languages and 
                 frontend technologies.</span>
                 <br/>
                 {true && <a href='mailTo:arifkavas@gmail.com'> Contact me</a>}
