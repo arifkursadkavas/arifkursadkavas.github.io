@@ -13,21 +13,23 @@ const Experience = (props) => {
 	return (
 		<div className="cardsList">
 			<Card
-				jobTitle="Software Engineer"
-				companyName="Snow Software"
+				jobTitle="Lead Software Engineer"
+				companyName="Flexera Inc. (Former Snow Software AB)"
 				duration="03.2021 - "
 				techStack={[
-					"React",
-					"Redux",
-					"Typescript",
-					"Vanilla Js",
-					"Scss",
-					"Go",
+					"Golang",
 					"NATS",
 					"Microservices",
+					"Azure",
+					"React",
+					"Redux",
+					"Micro Frontend",
+					"Javascript",
+					"Typescript",
+					"Scss",
 				]}
 				description={snowDesc}
-				companyUrl="https://snowsoftware.com"
+				companyUrl="https://flexera.com"
 				location="Stockholm/Sweden"
 			></Card>
 			<Card
@@ -96,7 +98,7 @@ const Experience = (props) => {
 				jobTitle="Embedded Software Engineer"
 				companyName="Grundig Electronics"
 				duration="09.2007 - 07.2009"
-				techStack={["C", "C++", "RTOS"]}
+				techStack={["C", "C++"]}
 				description={grundigDesc}
 				companyUrl="https://grundig.com.tr"
 				location="Izmir/Turkey"
