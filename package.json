@@ -23,7 +23,7 @@
     "history": "^5.3.0",
     "isomorphic-unfetch": "^4.0.2",
     "leaflet": "^1.7.1",
-    "next": "13.4.19",
+    "next": "16.2.6",
     "next-config": "^0.1.0",
     "next-redux-saga": "^4.1.2",
     "next-redux-wrapper": "8.1.0",
