@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 import ValuePicker from '../components/ValuePicker';
 import Seo from '../components/Seo';
 import {
-  BASE_COLUMNS,
   Criteria,
   DEFAULT_SORT_DIR,
   EMPTY_CRITERIA,
@@ -24,6 +23,7 @@ import {
   sortIndexes,
 } from '../lib/movies';
 import {
+  fetchMovieBase,
   fetchMovieCast,
   fetchMovieDetails,
   MoviesSource,
@@ -177,6 +177,7 @@ const Movies = () => {
   }, [mapAnchor, mapLocations]);
 
   const source = useRef<MoviesSource | null>(null);
+  const sourcePromise = useRef<Promise<MoviesSource> | null>(null);
   const pending = useRef(new Set<ListColumn>());
   const facetCache = useRef(new WeakMap<string[][], FacetOption[]>());
   const [options, setOptions] = useState<Partial<Record<ListColumn, FacetOption[]>>>({});
@@ -192,17 +193,28 @@ const Movies = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [mapLocations]);
 
-  const ensureColumn = useCallback(async (column: ListColumn) => {
-    if (!source.current || pending.current.has(column)) return;
-    pending.current.add(column);
-    try {
-      const raw = await readColumns(source.current, [column]);
-      setTable((table) => (table ? addListColumn(table, column, raw[column]) : table));
-    } catch (e) {
-      pending.current.delete(column);
-      setError(e instanceof Error ? e.message : String(e));
-    }
-  }, []);
+  const ensureColumn = useCallback(
+    async (column: ListColumn) => {
+      if (pending.current.has(column)) return;
+      pending.current.add(column);
+      try {
+        if (!source.current) {
+          sourcePromise.current ??= openMovies('/movies.parquet');
+          try {
+            source.current = await sourcePromise.current;
+          } finally {
+            sourcePromise.current = null;
+          }
+        }
+        const raw = await readColumns(source.current, [column]);
+        setTable((table) => (table ? addListColumn(table, column, raw[column]) : table));
+      } catch (e) {
+        pending.current.delete(column);
+        setError(e instanceof Error ? e.message : String(e));
+      }
+    },
+    []
+  );
 
   const ensureFacetOptions = useCallback((column: ListColumn) => {
     const rows = table?.lists[column];
@@ -220,16 +232,14 @@ const Movies = () => {
     let cancelled = false;
     (async () => {
       try {
-        const src = await openMovies('/movies.parquet');
-        const raw = await readColumns(src, BASE_COLUMNS);
+        const base = await fetchMovieBase('/movie-base.json.gz');
         if (cancelled) return;
-        source.current = src;
-        setTable(buildTable(src.count, raw));
+        setTable(buildTable(base.count, base.columns));
         const detailColumns = ['directors', 'filming_locations'] as const;
         const loadDetails = async (): Promise<boolean> => {
           detailColumns.forEach((column) => pending.current.add(column));
           try {
-            const details = await fetchMovieDetails('/movie-details.json.gz', src.count);
+            const details = await fetchMovieDetails('/movie-details.json.gz', base.count);
             if (!cancelled) {
               setTable((table) =>
                 table
@@ -251,7 +261,7 @@ const Movies = () => {
         const loadCast = async (): Promise<boolean> => {
           pending.current.add('stars');
           try {
-            const cast = await fetchMovieCast('/movie-cast.json.gz', src.count);
+            const cast = await fetchMovieCast('/movie-cast.json.gz', base.count);
             if (!cancelled) setTable((table) => (table ? addListColumn(table, 'stars', cast) : table));
             return true;
           } catch (e) {

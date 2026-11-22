@@ -2,7 +2,7 @@ import { asyncBufferFromUrl, cachedAsyncBuffer, parquetMetadataAsync, parquetRea
 import type { AsyncBuffer, FileMetaData } from 'hyparquet';
 import { compressors } from 'hyparquet-compressors';
 
-import type { RawColumns } from './movies';
+import { BASE_COLUMNS, type RawColumns } from './movies';
 import { parquetByteLength } from './parquetRange';
 
 export interface MoviesSource {
@@ -16,6 +16,11 @@ export interface MovieDetails {
   filming_locations: Array<string | null>;
 }
 
+export interface MovieBase {
+  count: number;
+  columns: RawColumns;
+}
+
 function isStringColumn(values: unknown, count: number): values is Array<string | null> {
   return (
     Array.isArray(values) &&
@@ -24,14 +29,14 @@ function isStringColumn(values: unknown, count: number): values is Array<string 
   );
 }
 
-async function fetchGzipJson(url: string): Promise<unknown> {
+async function fetchGzipJson(url: string, label: string): Promise<unknown> {
   if (typeof DecompressionStream === 'undefined') {
     throw new Error('this browser does not support gzip decompression');
   }
 
   const response = await fetch(url);
   if (!response.ok || !response.body) {
-    throw new Error(`could not load movie details: HTTP ${response.status}`);
+    throw new Error(`could not load ${label}: HTTP ${response.status}`);
   }
 
   const decompressed = response.body.pipeThrough(new DecompressionStream('gzip'));
@@ -46,8 +51,35 @@ export async function openMovies(url: string): Promise<MoviesSource> {
   return { file, metadata, count: Number(metadata.num_rows) };
 }
 
+export async function fetchMovieBase(url: string): Promise<MovieBase> {
+  const data = await fetchGzipJson(url, 'movie base data');
+  if (
+    typeof data !== 'object' ||
+    data === null ||
+    !('count' in data) ||
+    typeof data.count !== 'number' ||
+    !Number.isSafeInteger(data.count) ||
+    data.count <= 0 ||
+    !('columns' in data) ||
+    typeof data.columns !== 'object' ||
+    data.columns === null
+  ) {
+    throw new Error('movie base file has an invalid format');
+  }
+
+  const count = data.count;
+  const columns = data.columns as Record<string, unknown>;
+  for (const column of BASE_COLUMNS) {
+    if (!Array.isArray(columns[column]) || columns[column].length !== count) {
+      throw new Error(`movie base column "${column}" has an invalid shape`);
+    }
+  }
+
+  return { count, columns: columns as RawColumns };
+}
+
 export async function fetchMovieDetails(url: string, count: number): Promise<MovieDetails> {
-  const data = await fetchGzipJson(url);
+  const data = await fetchGzipJson(url, 'movie details');
   if (
     typeof data !== 'object' ||
     data === null ||
@@ -63,7 +95,7 @@ export async function fetchMovieDetails(url: string, count: number): Promise<Mov
 }
 
 export async function fetchMovieCast(url: string, count: number): Promise<Array<string | null>> {
-  const data = await fetchGzipJson(url);
+  const data = await fetchGzipJson(url, 'movie cast');
   if (!isStringColumn(data, count)) {
     throw new Error('movie cast file has an invalid format');
   }
