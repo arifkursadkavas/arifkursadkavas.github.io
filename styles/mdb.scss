@@ -635,6 +635,21 @@ $mdbSortedTint: #f8f8ff;
     line-clamp: 3;
   }
 
+  .mdbLocationButton {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 0.2em;
+  }
+
   .mdbPending {
     color: #b5b5c0;
   }
@@ -643,6 +658,71 @@ $mdbSortedTint: #f8f8ff;
     padding: 2.5em 1em;
     text-align: center;
     color: $mdbMuted;
+  }
+}
+
+.mdbMapBackdrop {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.mdbMapDialog {
+  display: flex;
+  flex-direction: column;
+  width: min(900px, 100%);
+  height: min(680px, 90vh);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #222;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.35);
+}
+
+.mdbMapHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+}
+
+.mdbMapContent {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.mdbMap {
+  flex: 1;
+  min-height: 240px;
+  width: 100%;
+}
+
+.mdbMapStatus {
+  padding-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.mdbMapPin {
+  background: transparent;
+  border: 0;
+
+  svg {
+    width: 28px;
+    height: 42px;
+    fill: #d33b32;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
   }
 }
 

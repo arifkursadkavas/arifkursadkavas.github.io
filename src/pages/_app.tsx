@@ -4,6 +4,7 @@ import type { AppProps } from "next/app";
 import Sidebar from "../components/Sidebar";
 
 import "../../styles/globals.scss";
+import "leaflet/dist/leaflet.css";
 import Layout from "../components/Layout";
 import Header from "../components/Header";
 import Script from "next/script";

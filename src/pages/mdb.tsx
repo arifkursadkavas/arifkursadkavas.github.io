@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { createPortal } from 'react-dom';
 
 import ValuePicker from '../components/ValuePicker';
 import Seo from '../components/Seo';
@@ -22,6 +24,8 @@ import {
   sortIndexes,
 } from '../lib/movies';
 import { MoviesSource, openMovies, readColumns } from '../lib/moviesParquet';
+
+const LocationMap = dynamic(() => import('../components/LocationMap'), { ssr: false });
 
 const PAGE_SIZE = 50;
 
@@ -105,7 +109,7 @@ function renderCell(t: MovieTable, key: SortKey, i: number): React.ReactNode {
     case 'stars':
       return t.lists.stars ? longText(t.lists.stars[i].join(', ')) : pending;
     case 'filming_locations':
-      return t.locations ? longText(t.locations[i]) : pending;
+      return t.locations?.[i] || null;
   }
 }
 
@@ -121,11 +125,22 @@ const Movies = () => {
   const [criteria, setCriteria] = useState<Criteria>(DEFAULT_CRITERIA);
   const [sort, setSort] = useState<Sort>(DEFAULT_SORT);
   const [shown, setShown] = useState(PAGE_SIZE);
+  const [mapLocations, setMapLocations] = useState<string[] | null>(null);
 
   const source = useRef<MoviesSource | null>(null);
   const pending = useRef(new Set<ListColumn>());
   const facetCache = useRef(new WeakMap<string[][], FacetOption[]>());
   const nextFilterId = useRef(DEFAULT_CRITERIA.lists.length);
+
+  useEffect(() => {
+    if (!mapLocations) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMapLocations(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mapLocations]);
 
   const ensureColumn = useCallback(async (column: ListColumn) => {
     if (!source.current || pending.current.has(column)) return;
@@ -390,7 +405,25 @@ const Movies = () => {
                   <tr key={table.id[i]}>
                     {TABLE_COLUMNS.map(({ key, numeric }) => (
                       <td key={key} className={cellClass(key, numeric, sort.key === key)}>
-                        {renderCell(table, key, i)}
+                        {key === 'filming_locations' && table.locations?.[i] ? (
+                          <button
+                            type='button'
+                            className='mdbLocationButton'
+                            onClick={() =>
+                              setMapLocations(
+                                table.locations![i]
+                                  .split(';')
+                                  .map((location) => location.trim())
+                                  .filter(Boolean)
+                              )
+                            }
+                            aria-label={`Show map for filming locations: ${table.locations[i]}`}
+                          >
+                            {longText(table.locations[i])}
+                          </button>
+                        ) : (
+                          renderCell(table, key, i)
+                        )}
                       </td>
                     ))}
                   </tr>
@@ -407,6 +440,37 @@ const Movies = () => {
           )}
         </div>
       )}
+      {mapLocations &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className='mdbMapBackdrop'
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setMapLocations(null);
+            }}
+          >
+            <section
+              className='mdbMapDialog'
+              role='dialog'
+              aria-modal='true'
+              aria-labelledby='mdbMapTitle'
+            >
+              <div className='mdbMapHeader'>
+                <h2 id='mdbMapTitle'>Filming locations</h2>
+                <button
+                  type='button'
+                  className='mdbButton'
+                  onClick={() => setMapLocations(null)}
+                  aria-label='Close map'
+                >
+                  Close
+                </button>
+              </div>
+              <LocationMap locations={mapLocations} />
+            </section>
+          </div>,
+          document.body
+        )}
     </div>
   );
 };
