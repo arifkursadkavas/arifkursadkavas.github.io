@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { createPortal } from 'react-dom';
 
@@ -105,7 +105,7 @@ function renderCell(t: MovieTable, key: SortKey, i: number): React.ReactNode {
       ) : null;
     }
     case 'directors':
-      return longText(t.lists.directors?.[i]?.join(', '));
+      return t.lists.directors ? longText(t.lists.directors[i]?.join(', ')) : pending;
     case 'stars':
       return t.lists.stars ? longText(t.lists.stars[i].join(', ')) : pending;
     case 'filming_locations':
@@ -126,6 +126,29 @@ const Movies = () => {
   const [sort, setSort] = useState<Sort>(DEFAULT_SORT);
   const [shown, setShown] = useState(PAGE_SIZE);
   const [mapLocations, setMapLocations] = useState<string[] | null>(null);
+  const [mapClosing, setMapClosing] = useState(false);
+  const [mapAnchor, setMapAnchor] = useState<{ x: number; y: number } | null>(null);
+  const [mapOrigin, setMapOrigin] = useState<{ x: number; y: number } | null>(null);
+  const mapDialogRef = useRef<HTMLElement | null>(null);
+
+  const openMap = (locations: string[], anchor: { x: number; y: number }) => {
+    setMapClosing(false);
+    setMapAnchor(anchor);
+    setMapOrigin(null);
+    setMapLocations(locations);
+  };
+  const closeMap = () => setMapClosing(true);
+
+  useLayoutEffect(() => {
+    const dialog = mapDialogRef.current;
+    if (!mapLocations || !mapAnchor || !dialog) return;
+
+    const rect = dialog.getBoundingClientRect();
+    setMapOrigin({
+      x: Math.max(0, Math.min(100, ((mapAnchor.x - rect.left) / rect.width) * 100)),
+      y: Math.max(0, Math.min(100, ((mapAnchor.y - rect.top) / rect.height) * 100)),
+    });
+  }, [mapAnchor, mapLocations]);
 
   const source = useRef<MoviesSource | null>(null);
   const pending = useRef(new Set<ListColumn>());
@@ -136,7 +159,7 @@ const Movies = () => {
     if (!mapLocations) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMapLocations(null);
+      if (event.key === 'Escape') closeMap();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -166,6 +189,7 @@ const Movies = () => {
         // Default filters and large list columns load after the table is usable.
         void ensureColumn('stars');
         void ensureColumn('filming_locations');
+        void ensureColumn('directors');
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
       }
@@ -421,7 +445,13 @@ const Movies = () => {
                                   type='button'
                                   className='mdbLocationButton'
                                   key={`${location}:${index}`}
-                                  onClick={() => setMapLocations([location])}
+                                  onClick={(event) => {
+                                    const rect = event.currentTarget.getBoundingClientRect();
+                                    openMap([location], {
+                                      x: rect.left + rect.width / 2,
+                                      y: rect.top + rect.height / 2,
+                                    });
+                                  }}
                                   aria-label={`Show map for filming location: ${location}`}
                                   title={location}
                                 >
@@ -453,13 +483,20 @@ const Movies = () => {
         typeof document !== 'undefined' &&
         createPortal(
           <div
-            className='mdbMapBackdrop'
+            className={`mdbMapBackdrop${mapClosing ? ' isClosing' : ''}`}
+            onAnimationEnd={(event) => {
+              if (event.target === event.currentTarget && event.animationName === 'mdbMapFadeOut') {
+                setMapLocations(null);
+              }
+            }}
             onMouseDown={(event) => {
-              if (event.target === event.currentTarget) setMapLocations(null);
+              if (event.target === event.currentTarget) closeMap();
             }}
           >
             <section
-              className='mdbMapDialog'
+              ref={mapDialogRef}
+              className={`mdbMapDialog${mapClosing ? ' isClosing' : ''}`}
+              style={mapOrigin ? { transformOrigin: `${mapOrigin.x}% ${mapOrigin.y}%` } : undefined}
               role='dialog'
               aria-modal='true'
               aria-labelledby='mdbMapTitle'
@@ -469,7 +506,7 @@ const Movies = () => {
                 <button
                   type='button'
                   className='mdbButton'
-                  onClick={() => setMapLocations(null)}
+                  onClick={closeMap}
                   aria-label='Close map'
                 >
                   Close
