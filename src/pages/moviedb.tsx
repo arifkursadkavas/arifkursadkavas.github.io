@@ -128,6 +128,7 @@ const cellClass = (key: SortKey, numeric: boolean | undefined, sorted: boolean) 
 const Movies = () => {
   const [table, setTable] = useState<MovieTable | null>(null);
   const [error, setError] = useState('');
+  const [detailsReady, setDetailsReady] = useState(false);
   const [criteria, setCriteria] = useState<Criteria>(DEFAULT_CRITERIA);
   const [sort, setSort] = useState<Sort>(DEFAULT_SORT);
   const [shown, setShown] = useState(PAGE_SIZE);
@@ -225,7 +226,7 @@ const Movies = () => {
         source.current = src;
         setTable(buildTable(src.count, raw));
         const detailColumns = ['directors', 'filming_locations'] as const;
-        const loadDetails = async () => {
+        const loadDetails = async (): Promise<boolean> => {
           detailColumns.forEach((column) => pending.current.add(column));
           try {
             const details = await fetchMovieDetails('/movie-details.json.gz', src.count);
@@ -239,25 +240,30 @@ const Movies = () => {
                   : table
               );
             }
+            return true;
           } catch (e) {
             if (!cancelled) setError(e instanceof Error ? e.message : String(e));
+            return false;
           } finally {
             detailColumns.forEach((column) => pending.current.delete(column));
           }
         };
-        const loadCast = async () => {
+        const loadCast = async (): Promise<boolean> => {
           pending.current.add('stars');
           try {
             const cast = await fetchMovieCast('/movie-cast.json.gz', src.count);
             if (!cancelled) setTable((table) => (table ? addListColumn(table, 'stars', cast) : table));
+            return true;
           } catch (e) {
             if (!cancelled) setError(e instanceof Error ? e.message : String(e));
+            return false;
           } finally {
             pending.current.delete('stars');
           }
         };
-        void loadDetails();
-        void loadCast();
+        void Promise.all([loadDetails(), loadCast()]).then((loaded) => {
+          if (!cancelled && loaded.every(Boolean)) setDetailsReady(true);
+        });
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
       }
@@ -444,15 +450,26 @@ const Movies = () => {
         </aside>
 
         <section className='mdbResults' aria-label='Movie results'>
-          <div className='mdbStatus'>
-            {error
-              ? `Could not load movies: ${error}`
-              : table
-                ? `${matches.length.toLocaleString()} of ${table.count.toLocaleString()} movies`
-                : 'Loading movies…'}
-          </div>
+          {table && detailsReady && (
+            <div className='mdbStatus'>
+              {error
+                ? `Could not load movies: ${error}`
+                : `${matches.length.toLocaleString()} of ${table.count.toLocaleString()} movies`}
+            </div>
+          )}
 
-          {table && (
+          {!table || !detailsReady ? (
+            error ? (
+              <div className='mdbTableError' role='alert'>
+                Could not load movies: {error}
+              </div>
+            ) : (
+              <div className='mdbTableLoading' role='status' aria-live='polite'>
+                <span className='mdbSpinner' aria-hidden='true' />
+                Loading movie data…
+              </div>
+            )
+          ) : (
             <div className='mdbTableWrap'>
           <div className='mdbScroll'>
             <table className='mdbTable'>
