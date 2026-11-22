@@ -294,18 +294,6 @@ const Movies = () => {
               />
             </label>
             <label className='mdbField'>
-              <span>Min rating</span>
-              <input
-                className='mdbInput'
-                type='number'
-                min={0}
-                max={10}
-                step={0.1}
-                value={criteria.minRating ?? ''}
-                onChange={(e) => update({ minRating: toNumber(e.target.value) })}
-              />
-            </label>
-            <label className='mdbField'>
               <span>Year from</span>
               <input
                 className='mdbInput'
@@ -321,6 +309,18 @@ const Movies = () => {
                 type='number'
                 value={criteria.yearTo ?? ''}
                 onChange={(e) => update({ yearTo: toNumber(e.target.value) })}
+              />
+            </label>
+            <label className='mdbField'>
+              <span>Min rating</span>
+              <input
+                className='mdbInput'
+                type='number'
+                min={0}
+                max={10}
+                step={0.1}
+                value={criteria.minRating ?? ''}
+                onChange={(e) => update({ minRating: toNumber(e.target.value) })}
               />
             </label>
           </div>

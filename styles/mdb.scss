@@ -207,11 +207,16 @@ $mdbGap: 1em;
   color: $mdbMuted;
 }
 
-// title takes the free space, the three numeric fields share one fixed width
+// title, year range, and rating occupy separate lines
 .mdbSearch {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) repeat(3, 8em);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: $mdbGap;
+}
+
+.mdbSearch > .mdbField:first-child,
+.mdbSearch > .mdbField:last-child {
+  grid-column: 1 / -1;
 }
 
 .mdbField {
@@ -300,7 +305,7 @@ $mdbGap: 1em;
   }
 
   .mdbSearch {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     .mdbField:first-child {
       grid-column: 1 / -1;
