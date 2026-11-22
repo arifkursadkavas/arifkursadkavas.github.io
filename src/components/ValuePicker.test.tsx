@@ -31,6 +31,41 @@ function setup(selected: string[] = []) {
 }
 
 describe('ValuePicker keyboard navigation', () => {
+  test('switches the filter input prompt to search when its data is loaded', () => {
+    let tree!: renderer.ReactTestRenderer;
+    act(() => {
+      tree = renderer.create(
+        <ValuePicker
+          options={null}
+          optionsAvailable
+          selected={[]}
+          label='Cast'
+          placeholder='Search cast…'
+          onAdd={jest.fn()}
+          onRemove={jest.fn()}
+        />
+      );
+    });
+
+    expect(tree.root.findByType('input').props.placeholder).toBe('Search cast…');
+
+    act(() => {
+      tree.update(
+        <ValuePicker
+          options={options}
+          optionsAvailable
+          selected={[]}
+          label='Cast'
+          placeholder='Search cast…'
+          onAdd={jest.fn()}
+          onRemove={jest.fn()}
+        />
+      );
+    });
+
+    expect(tree.root.findByType('input').props.placeholder).toBe('Search cast…');
+  });
+
   test('arrow keys open the list and move through the options, wrapping at both ends', () => {
     const picker = setup();
     expect(picker.listed()).toEqual([]);

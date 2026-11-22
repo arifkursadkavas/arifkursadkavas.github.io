@@ -52,6 +52,9 @@ export default function ValuePicker({
   const showList = open && matches.length > 0;
   const showEmpty = open && options != null && matches.length === 0 && query.trim() !== '';
   const activeIndex = showList ? Math.min(active, matches.length - 1) : -1;
+  const inputPlaceholder = !optionsAvailable
+    ? `Loading ${label.toLowerCase()}…`
+    : placeholder ?? `Search ${label.toLowerCase()}…`;
 
   useEffect(() => {
     // keeps the highlighted option visible while moving through a long list
@@ -140,7 +143,7 @@ export default function ValuePicker({
           aria-activedescendant={activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined}
           value={query}
           disabled={!optionsAvailable}
-          placeholder={options ? placeholder : optionsAvailable ? 'Preparing suggestions…' : 'Loading…'}
+          placeholder={inputPlaceholder}
           onChange={(e) => {
             setQuery(e.target.value);
             setOpen(true);
