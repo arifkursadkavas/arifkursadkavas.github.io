@@ -70,11 +70,31 @@ $mdbGap: 1em;
 }
 
 .mdbPage {
+  position: relative;
+  left: 50%;
+  box-sizing: border-box;
+  width: min(96vw, 1900px);
+  margin-left: 0;
+  transform: translateX(-50%);
   padding-bottom: 2em;
   // keeps the dropdown z-index local so it never paints over the fixed header
   isolation: isolate;
-  // the table and its status line use this width instead of the narrower content column
-  --mdb-wide: min(96vw, 1900px);
+  --mdb-wide: 100%;
+
+  .mdbWorkspace {
+    display: grid;
+    grid-template-columns: minmax(270px, 330px) minmax(0, 1fr);
+    align-items: start;
+    gap: 1.25em;
+  }
+
+  .mdbSidebar {
+    min-width: 0;
+  }
+
+  .mdbResults {
+    min-width: 0;
+  }
 
   .mdbInput {
     @include mdb-control;
@@ -129,6 +149,48 @@ $mdbGap: 1em;
 
 .mdbSection + .mdbSection {
   margin-top: 1.5em;
+}
+
+.mdbSidebar {
+  .mdbSearch {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .mdbField:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .mdbFilter {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'label remove'
+      'mode mode'
+      'field field';
+    gap: 0.4em;
+
+    & + & {
+      margin-top: 1.2em;
+    }
+  }
+
+  .mdbFooter {
+    align-items: stretch;
+    flex-direction: column;
+
+    .mdbAdd {
+      width: 100%;
+    }
+  }
+
+  .mdbFooterRight {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mdbInline {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 
 .mdbHeading {
@@ -406,9 +468,8 @@ $mdbGap: 1em;
 
 .mdbStatus {
   box-sizing: border-box;
-  width: var(--mdb-wide);
-  // centres the wide block on the narrower content column it lives in
-  margin: 1.2em 0 0.6em calc((100% - var(--mdb-wide)) / 2);
+  width: 100%;
+  margin: 0.3em 0 0.6em;
   padding-left: 0.4em;
   font-size: 0.9em;
   color: $mdbMuted;
@@ -420,8 +481,8 @@ $mdbSortedTint: #f8f8ff;
 
 .mdbTableWrap {
   @include card-background-color;
-  width: var(--mdb-wide);
-  margin-left: calc((100% - var(--mdb-wide)) / 2);
+  width: 100%;
+  margin-left: 0;
   border-radius: 1em;
   overflow: hidden;
 }
@@ -778,4 +839,16 @@ $mdbSortedTint: #f8f8ff;
   padding: 1em;
   text-align: center;
   border-top: 1px solid $mdbRowLine;
+}
+
+@media screen and (max-width: 1100px) {
+  .mdbPage {
+    .mdbWorkspace {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mdbSidebar .mdbPanel {
+      position: static;
+    }
+  }
 }

@@ -17,7 +17,7 @@ export const LIST_COLUMN_LABELS: Record<ListColumn, string> = {
   countries_origin: 'Countries',
   filming_locations: 'Filming locations',
   directors: 'Directors',
-  stars: 'Stars',
+  stars: 'Cast',
   writers: 'Writers',
   production_companies: 'Production companies',
   mpa: 'Rating (MPA)',

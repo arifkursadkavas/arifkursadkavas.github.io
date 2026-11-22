@@ -50,7 +50,7 @@ const TABLE_COLUMNS: { key: SortKey; label: string; hint?: string; numeric?: boo
   { key: 'mpa', label: 'MPA' },
   { key: 'genres', label: 'Genres' },
   { key: 'directors', label: 'Directors' },
-  { key: 'stars', label: 'Stars' },
+  { key: 'stars', label: 'Cast' },
   { key: 'filming_locations', label: 'Filming location' },
 ];
 
@@ -258,7 +258,9 @@ const Movies = () => {
       />
       <h1>Movie Database Browser</h1>
 
-      <div className='mdbPanel'>
+      <div className='mdbWorkspace'>
+        <aside className='mdbSidebar' aria-label='Movie search and filters'>
+        <div className='mdbPanel'>
         <section className='mdbSection'>
           <h3 className='mdbHeading'>Search</h3>
           <div className='mdbSearch'>
@@ -385,18 +387,20 @@ const Movies = () => {
             </button>
           </div>
         </div>
-      </div>
+        </div>
+        </aside>
 
-      <div className='mdbStatus'>
-        {error
-          ? `Could not load movies: ${error}`
-          : table
-            ? `${matches.length.toLocaleString()} of ${table.count.toLocaleString()} movies`
-            : 'Loading movies…'}
-      </div>
+        <section className='mdbResults' aria-label='Movie results'>
+          <div className='mdbStatus'>
+            {error
+              ? `Could not load movies: ${error}`
+              : table
+                ? `${matches.length.toLocaleString()} of ${table.count.toLocaleString()} movies`
+                : 'Loading movies…'}
+          </div>
 
-      {table && (
-        <div className='mdbTableWrap'>
+          {table && (
+            <div className='mdbTableWrap'>
           <div className='mdbScroll'>
             <table className='mdbTable'>
               <thead>
@@ -478,7 +482,9 @@ const Movies = () => {
             </div>
           )}
         </div>
-      )}
+          )}
+        </section>
+      </div>
       {mapLocations &&
         typeof document !== 'undefined' &&
         createPortal(
