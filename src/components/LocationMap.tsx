@@ -80,6 +80,7 @@ export default function LocationMap({ locations }: { locations: string[] }) {
     <div className='mdbMapContent'>
       <MapContainer center={center} zoom={2} scrollWheelZoom className='mdbMap'>
         <TileLayer
+          className='mdbMapTiles'
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         />

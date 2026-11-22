@@ -715,6 +715,10 @@ $mdbSortedTint: #f8f8ff;
   width: 100%;
 }
 
+.mdbMapTiles {
+  filter: grayscale(1) brightness(1.04) contrast(0.92);
+}
+
 .mdbMapStatus {
   padding-top: 0.5rem;
   font-size: 0.85rem;
