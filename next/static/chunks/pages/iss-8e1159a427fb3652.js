@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[971],{1184:(_,s,e)=>{(window.__NEXT_P=window.__NEXT_P||[]).push(["/iss",function(){return e(7723)}])},7723:(_,s,e)=>{"use strict";e.r(s),e.d(s,{default:()=>n});var u=e(7876);e(4232);let n=_=>(0,u.jsx)("div",{})}},_=>{_.O(0,[636,593,792],()=>_(_.s=1184)),_N_E=_.O()}]);
