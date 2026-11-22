@@ -54,6 +54,46 @@ $headerFontColor: #ffffff;
       color: aliceblue;
       cursor: pointer
     }
+
+    .mHeaderDropdown {
+      position: relative;
+      margin-left: 3em;
+
+      > .mHeaderItem {
+        bottom: 0.2em;
+        margin-left: 0;
+        list-style: none;
+
+        &::-webkit-details-marker {
+          display: none;
+        }
+      }
+
+      .mHeaderDropdownMenu {
+        position: absolute;
+        top: calc(100% - 0.5em);
+        right: 0;
+        min-width: 10em;
+        padding: 0.5em 0;
+        background-color: $headerBackgroundColor;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.25em;
+        box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.25);
+        line-height: normal;
+
+        > a {
+          display: block;
+          padding: 0.75em 1em;
+          color: $headerFontColor;
+          text-decoration: none;
+
+          &:hover,
+          &:focus-visible {
+            background-color: rgba(255, 255, 255, 0.12);
+          }
+        }
+      }
+    }
   }
   
 
@@ -120,10 +160,50 @@ $headerFontColor: #ffffff;
     }
     .mHeaderItem {
       bottom: 1.2em;
-      margin-left: 3em;
+      margin-left: 1em;
       position: relative;
       color: aliceblue;
       cursor: pointer
+    }
+
+    .mHeaderDropdown {
+      position: relative;
+      margin-left: 1em;
+
+      > .mHeaderItem {
+        bottom: 1.2em;
+        margin-left: 0;
+        list-style: none;
+
+        &::-webkit-details-marker {
+          display: none;
+        }
+      }
+
+      .mHeaderDropdownMenu {
+        position: absolute;
+        top: calc(100% - 1.2em);
+        right: 0;
+        min-width: 10em;
+        padding: 0.5em 0;
+        background-color: $headerBackgroundColor;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.25em;
+        box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.25);
+        line-height: normal;
+
+        > a {
+          display: block;
+          padding: 0.75em 1em;
+          color: $headerFontColor;
+          text-decoration: none;
+
+          &:hover,
+          &:focus-visible {
+            background-color: rgba(255, 255, 255, 0.12);
+          }
+        }
+      }
     }
   }
   

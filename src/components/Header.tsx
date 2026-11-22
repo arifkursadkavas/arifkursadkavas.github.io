@@ -1,7 +1,6 @@
-import React, { useState } from "react";
 import Link from "next/link";
 
-export default (props) => {
+export default function Header() {
   return (
     <div className="mHeader">
       <Link href="/">
@@ -20,7 +19,14 @@ export default (props) => {
         <Link href={"/education"} key={"Education"}>
           <div className="mHeaderItem">{"Education"}</div>
         </Link>
+
+        <details className="mHeaderDropdown">
+          <summary className="mHeaderItem">{"Miscellaneous"}</summary>
+          <div className="mHeaderDropdownMenu">
+            <Link href="/mdb">{"Movie Database"}</Link>
+          </div>
+        </details>
       </div>
     </div>
   );
-};
+}
