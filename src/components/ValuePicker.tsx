@@ -3,11 +3,13 @@ import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { FacetOption, suggest } from '../lib/movies';
 
 interface Props {
-  // null while the column is still being downloaded
+  // null until suggestions are prepared
   options: FacetOption[] | null;
+  optionsAvailable?: boolean;
   selected: string[];
   label: string;
   placeholder?: string;
+  onFocus?: () => void;
   onAdd: (value: string) => void;
   onRemove: (value: string) => void;
 }
@@ -26,7 +28,16 @@ function Highlight({ option, query }: { option: FacetOption; query: string }) {
   );
 }
 
-export default function ValuePicker({ options, selected, label, placeholder, onAdd, onRemove }: Props) {
+export default function ValuePicker({
+  options,
+  optionsAvailable = options !== null,
+  selected,
+  label,
+  placeholder,
+  onFocus = () => {},
+  onAdd,
+  onRemove,
+}: Props) {
   const id = useId();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -102,7 +113,10 @@ export default function ValuePicker({ options, selected, label, placeholder, onA
 
   return (
     <div className='valuePicker'>
-      <div className={`valueField${options ? '' : ' isLoading'}`} onClick={() => inputRef.current?.focus()}>
+      <div
+        className={`valueField${optionsAvailable ? '' : ' isLoading'}`}
+        onClick={() => inputRef.current?.focus()}
+      >
         {selected.map((value) => (
           <span className='valueChip' key={value}>
             <span className='valueChipText' title={value}>
@@ -125,15 +139,18 @@ export default function ValuePicker({ options, selected, label, placeholder, onA
           aria-controls={showList ? listId : undefined}
           aria-activedescendant={activeIndex >= 0 ? `${id}-option-${activeIndex}` : undefined}
           value={query}
-          disabled={!options}
-          placeholder={options ? placeholder : 'Loading…'}
+          disabled={!optionsAvailable}
+          placeholder={options ? placeholder : optionsAvailable ? 'Preparing suggestions…' : 'Loading…'}
           onChange={(e) => {
             setQuery(e.target.value);
             setOpen(true);
             // typing highlights the best match so Enter adds it
             setActive(e.target.value.trim() ? 0 : -1);
           }}
-          onFocus={() => setOpen(true)}
+          onFocus={() => {
+            setOpen(true);
+            onFocus();
+          }}
           onBlur={close}
           onKeyDown={onKeyDown}
         />

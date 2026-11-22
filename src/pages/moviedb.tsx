@@ -23,7 +23,13 @@ import {
   filterMovies,
   sortIndexes,
 } from '../lib/movies';
-import { MoviesSource, openMovies, readColumns } from '../lib/moviesParquet';
+import {
+  fetchMovieCast,
+  fetchMovieDetails,
+  MoviesSource,
+  openMovies,
+  readColumns,
+} from '../lib/moviesParquet';
 
 const LocationMap = dynamic(() => import('../components/LocationMap'), { ssr: false });
 
@@ -172,6 +178,7 @@ const Movies = () => {
   const source = useRef<MoviesSource | null>(null);
   const pending = useRef(new Set<ListColumn>());
   const facetCache = useRef(new WeakMap<string[][], FacetOption[]>());
+  const [options, setOptions] = useState<Partial<Record<ListColumn, FacetOption[]>>>({});
   const nextFilterId = useRef(DEFAULT_CRITERIA.lists.length);
 
   useEffect(() => {
@@ -184,31 +191,29 @@ const Movies = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [mapLocations]);
 
-  const ensureColumns = useCallback(async (columns: ListColumn[]) => {
-    if (!source.current) return;
-    const columnsToLoad = columns.filter((column) => !pending.current.has(column));
-    if (columnsToLoad.length === 0) return;
-    columnsToLoad.forEach((column) => pending.current.add(column));
+  const ensureColumn = useCallback(async (column: ListColumn) => {
+    if (!source.current || pending.current.has(column)) return;
+    pending.current.add(column);
     try {
-      const raw = await readColumns(source.current, columnsToLoad);
-      setTable((table) =>
-        table
-          ? columnsToLoad.reduce(
-              (updatedTable, column) => addListColumn(updatedTable, column, raw[column]),
-              table
-            )
-          : table
-      );
+      const raw = await readColumns(source.current, [column]);
+      setTable((table) => (table ? addListColumn(table, column, raw[column]) : table));
     } catch (e) {
-      columnsToLoad.forEach((column) => pending.current.delete(column));
+      pending.current.delete(column);
       setError(e instanceof Error ? e.message : String(e));
     }
   }, []);
 
-  const ensureColumn = useCallback(
-    (column: ListColumn) => ensureColumns([column]),
-    [ensureColumns]
-  );
+  const ensureFacetOptions = useCallback((column: ListColumn) => {
+    const rows = table?.lists[column];
+    if (!rows || options[column]) return;
+
+    let facets = facetCache.current.get(rows);
+    if (!facets) {
+      facets = facetOptions(rows);
+      facetCache.current.set(rows, facets);
+    }
+    setOptions((current) => ({ ...current, [column]: facets }));
+  }, [options, table]);
 
   useEffect(() => {
     let cancelled = false;
@@ -219,7 +224,40 @@ const Movies = () => {
         if (cancelled) return;
         source.current = src;
         setTable(buildTable(src.count, raw));
-        void ensureColumns(['directors', 'stars', 'filming_locations']);
+        const detailColumns = ['directors', 'filming_locations'] as const;
+        const loadDetails = async () => {
+          detailColumns.forEach((column) => pending.current.add(column));
+          try {
+            const details = await fetchMovieDetails('/movie-details.json.gz', src.count);
+            if (!cancelled) {
+              setTable((table) =>
+                table
+                  ? detailColumns.reduce(
+                      (updatedTable, column) => addListColumn(updatedTable, column, details[column]),
+                      table
+                    )
+                  : table
+              );
+            }
+          } catch (e) {
+            if (!cancelled) setError(e instanceof Error ? e.message : String(e));
+          } finally {
+            detailColumns.forEach((column) => pending.current.delete(column));
+          }
+        };
+        const loadCast = async () => {
+          pending.current.add('stars');
+          try {
+            const cast = await fetchMovieCast('/movie-cast.json.gz', src.count);
+            if (!cancelled) setTable((table) => (table ? addListColumn(table, 'stars', cast) : table));
+          } catch (e) {
+            if (!cancelled) setError(e instanceof Error ? e.message : String(e));
+          } finally {
+            pending.current.delete('stars');
+          }
+        };
+        void loadDetails();
+        void loadCast();
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
       }
@@ -227,7 +265,7 @@ const Movies = () => {
     return () => {
       cancelled = true;
     };
-  }, [ensureColumns]);
+  }, [ensureColumn]);
 
   const update = (patch: Partial<Criteria>) => {
     setCriteria((c) => ({ ...c, ...patch }));
@@ -250,23 +288,6 @@ const Movies = () => {
     );
     setShown(PAGE_SIZE);
   };
-
-  // the distinct values of a column are only computed once per loaded column
-  const options = useMemo(() => {
-    const out: Partial<Record<ListColumn, FacetOption[]>> = {};
-    if (table) {
-      for (const column of Object.keys(table.lists) as ListColumn[]) {
-        const rows = table.lists[column];
-        let facets = facetCache.current.get(rows);
-        if (!facets) {
-          facets = facetOptions(rows);
-          facetCache.current.set(rows, facets);
-        }
-        out[column] = facets;
-      }
-    }
-    return out;
-  }, [table]);
 
   const matches = useMemo(() => (table ? filterMovies(table, criteria) : []), [table, criteria]);
   const sorted = useMemo(
@@ -356,9 +377,11 @@ const Movies = () => {
                 </select>
                 <ValuePicker
                   options={options[filter.column] ?? null}
+                  optionsAvailable={Boolean(table?.lists[filter.column])}
                   selected={filter.values}
                   label={label}
                   placeholder={`Search ${label.toLowerCase()}…`}
+                  onFocus={() => ensureFacetOptions(filter.column)}
                   onAdd={(value) => updateFilter(filter.id, { values: [...filter.values, value] })}
                   onRemove={(value) =>
                     updateFilter(filter.id, { values: filter.values.filter((v) => v !== value) })

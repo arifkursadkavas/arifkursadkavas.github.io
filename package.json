@@ -11,6 +11,9 @@
   "scripts": {
   
     
+  "prebuild": "node scripts/exportMovieDetails.mjs",
+  
+    
   "dev": "NODE_ENV=development next -p 3001",
   
     

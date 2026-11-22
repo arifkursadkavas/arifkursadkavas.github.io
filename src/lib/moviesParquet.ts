@@ -11,12 +11,63 @@ export interface MoviesSource {
   count: number;
 }
 
+export interface MovieDetails {
+  directors: Array<string | null>;
+  filming_locations: Array<string | null>;
+}
+
+function isStringColumn(values: unknown, count: number): values is Array<string | null> {
+  return (
+    Array.isArray(values) &&
+    values.length === count &&
+    values.every((value) => value === null || typeof value === 'string')
+  );
+}
+
+async function fetchGzipJson(url: string): Promise<unknown> {
+  if (typeof DecompressionStream === 'undefined') {
+    throw new Error('this browser does not support gzip decompression');
+  }
+
+  const response = await fetch(url);
+  if (!response.ok || !response.body) {
+    throw new Error(`could not load movie details: HTTP ${response.status}`);
+  }
+
+  const decompressed = response.body.pipeThrough(new DecompressionStream('gzip'));
+  return new Response(decompressed).json();
+}
+
 export async function openMovies(url: string): Promise<MoviesSource> {
   const byteLength = await parquetByteLength(url);
   const remoteFile = await asyncBufferFromUrl({ url, byteLength });
   const file = cachedAsyncBuffer(remoteFile, { minSize: 64 * 1024 });
   const metadata = await parquetMetadataAsync(file);
   return { file, metadata, count: Number(metadata.num_rows) };
+}
+
+export async function fetchMovieDetails(url: string, count: number): Promise<MovieDetails> {
+  const data = await fetchGzipJson(url);
+  if (
+    typeof data !== 'object' ||
+    data === null ||
+    !('directors' in data) ||
+    !('filming_locations' in data) ||
+    !isStringColumn(data.directors, count) ||
+    !isStringColumn(data.filming_locations, count)
+  ) {
+    throw new Error('movie details file has an invalid format');
+  }
+
+  return { directors: data.directors, filming_locations: data.filming_locations };
+}
+
+export async function fetchMovieCast(url: string, count: number): Promise<Array<string | null>> {
+  const data = await fetchGzipJson(url);
+  if (!isStringColumn(data, count)) {
+    throw new Error('movie cast file has an invalid format');
+  }
+  return data;
 }
 
 /** Reads only the requested columns; the other column chunks are never downloaded. */
