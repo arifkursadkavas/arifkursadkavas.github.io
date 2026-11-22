@@ -33,5 +33,5 @@ cp sitemap.xml out/
 cd ..
 cp -rf ./out/* .
 git add .
-git commit -m "$1" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git commit -m "$1"
 git push

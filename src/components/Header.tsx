@@ -23,7 +23,7 @@ export default function Header() {
         <details className="mHeaderDropdown">
           <summary className="mHeaderItem">{"Miscellaneous"}</summary>
           <div className="mHeaderDropdownMenu">
-            <Link href="/mdb">{"Movie Database"}</Link>
+            <Link href="/moviedb">{"Movie Database"}</Link>
           </div>
         </details>
       </div>

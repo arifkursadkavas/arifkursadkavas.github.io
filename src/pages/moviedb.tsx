@@ -293,7 +293,7 @@ const Movies = () => {
       <Seo
         title='Movie Database Browser | Search and Filter Movies'
         description='Explore a 107,000-title movie dataset. Search by title, rating, and year, or filter by genre, cast, and filming location.'
-        path='/mdb'
+        path='/moviedb'
       />
       <h1>Movie Database Browser</h1>
 
