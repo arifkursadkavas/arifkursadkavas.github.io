@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import Head from 'next/head';
 
 import ValuePicker from '../components/ValuePicker';
+import Seo from '../components/Seo';
 import {
   BASE_COLUMNS,
   Criteria,
@@ -212,9 +212,12 @@ const Movies = () => {
 
   return (
     <div className='mdbPage'>
-      <Head>
-        <title>Movies</title>
-      </Head>
+      <Seo
+        title='Movie Database Browser | Search and Filter Movies'
+        description='Explore a 107,000-title movie dataset. Search by title, rating, and year, or filter by genre, cast, and filming location.'
+        path='/mdb'
+      />
+      <h1>Movie Database Browser</h1>
 
       <div className='mdbPanel'>
         <section className='mdbSection'>

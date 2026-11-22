@@ -1,10 +1,17 @@
 import React from 'react';
 import Card from '../components/Card';
+import Seo from '../components/Seo';
 
 const Education = (props) => {
-  const mscDesc = [];
   return (
-    <div className='cardsList'>
+    <main className='cardsList'>
+      <Seo
+        title='Education | Arif Kürsad Kavas'
+        description='Education of Arif Kürsad Kavas, including an M.Sc. and B.Sc. in Electronics Engineering, with a focus on wireless communications and signal processing.'
+        path='/education'
+      />
+      <h1>Education</h1>
+      <p>Electronics engineering studies focused on communications, signal processing, and electronics.</p>
       <Card
         jobTitle='M.Sc Electronics Engineering'
         companyName='Istanbul Technical University'
@@ -50,7 +57,7 @@ const Education = (props) => {
         companyUrl='http://izmirbal.meb.k12.tr/'
         location=''
       ></Card>
-    </div>
+    </main>
   );
 };
 

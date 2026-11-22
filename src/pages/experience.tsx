@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Card from '../components/Card';
+import Seo from '../components/Seo';
 import {
 	pbpDesc,
 	jotDesc,
@@ -11,7 +12,14 @@ import {
 
 const Experience = (props) => {
 	return (
-		<div className="cardsList">
+		<main className="cardsList">
+			<Seo
+				title="Software Engineering Experience | Arif Kürsad Kavas"
+				description="Explore the software engineering career of Arif Kürsad Kavas, from embedded systems and telecom to full-stack applications, microservices, and cloud software."
+				path="/experience"
+			/>
+			<h1>Software Engineering Experience</h1>
+			<p>More than 20 years of experience across embedded software, web applications, microservices, and software architecture.</p>
 			<Card
 				jobTitle="Lead Software Engineer"
 				companyName="Flexera Inc. (Former Snow Software AB)"
@@ -103,7 +111,7 @@ const Experience = (props) => {
 				companyUrl="https://grundig.com.tr"
 				location="Izmir/Turkey"
 			></Card>
-		</div>
+		</main>
 
 		//   <object
 		//     data='../static/ArifKursadKAVAS_CV.pdf'
