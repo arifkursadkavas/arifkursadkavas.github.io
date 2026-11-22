@@ -1,0 +1,1 @@
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,9105,(o,t,i)=>{let s="/who";(window.__NEXT_P=window.__NEXT_P||[]).push([s,()=>o.r(7006)]),t.hot&&t.hot.dispose(function(){window.__NEXT_P.push([s])})},7006,o=>{"use strict";var t=o.i(1398);o.s(["default",0,o=>(0,t.jsx)("div",{})])}]);
