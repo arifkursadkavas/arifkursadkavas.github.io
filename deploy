@@ -3,26 +3,25 @@
 #npm run test
 rm -rf .next out
 npm run build
-npm run export
 mv ./out/_next ./out/next
 cd ./out 
 
  #rename all paths containing next to next
 if [[ $OSTYPE == 'darwin'* ]]; then
   #echo 'macOS'
-  grep -rli --exclude="deploy" '_next' * | xargs -I@ sed -i '' 's/_next/next/g' @
+  grep -rli --exclude="deploy" --exclude="*.parquet" '_next' * | xargs -I@ sed -i '' 's/_next/next/g' @
 else
     #echo 'LINUX'
-    grep -rli --exclude="deploy" '_next' | xargs  sed -i 's/_next/next/g'
+    grep -rli --exclude="deploy" --exclude="*.parquet" '_next' | xargs  sed -i 's/_next/next/g'
 fi
 
 #remove all paths inside files starting with /_ to /
 if [[ $OSTYPE == 'darwin'* ]]; then
   #echo 'macOS'
-  grep -rli --exclude="deploy" '/_'  * | xargs -I@ sed -i '' 's/\/_/\//g' @
+  grep -rli --exclude="deploy" --exclude="*.parquet" '/_'  * | xargs -I@ sed -i '' 's/\/_/\//g' @
 else
   #echo 'LINUX'
-  grep -rli --exclude="deploy" '/_' | xargs  sed -i 's/\/_/\//g'
+  grep -rli --exclude="deploy" --exclude="*.parquet" '/_' | xargs  sed -i 's/\/_/\//g'
 fi
 
 
