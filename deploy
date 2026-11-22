@@ -26,9 +26,12 @@ fi
 
 
 #rename all files starting with _ to remove it.
-for i in $(find . -iname '_*') ; do mv $i $(echo $i | sed -e "s/_//"); done 
+while IFS= read -r -d '' path; do
+  name=${path##*/}
+  mv "$path" "${path%/*}/${name#_}"
+done < <(find . -depth -name '_*' -print0)
 
-cp sitemap.xml out/
+cp ../sitemap.xml .
 
 cd ..
 cp -rf ./out/* .
