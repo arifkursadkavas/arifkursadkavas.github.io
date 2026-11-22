@@ -148,8 +148,9 @@ const Movies = () => {
         if (cancelled) return;
         source.current = src;
         setTable(buildTable(src.count, raw));
-        // the stars column is the biggest one, so it is fetched after the page is usable
-        ensureColumn('stars');
+        // Default filters and large list columns load after the table is usable.
+        void ensureColumn('stars');
+        void ensureColumn('filming_locations');
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
       }

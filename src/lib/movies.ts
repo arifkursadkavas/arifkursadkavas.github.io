@@ -84,8 +84,6 @@ export const BASE_COLUMNS = [
   'genres',
   'languages',
   'countries_origin',
-  'filming_locations',
-  'directors',
 ];
 
 /**
