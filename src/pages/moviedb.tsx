@@ -464,10 +464,7 @@ const Movies = () => {
                 Could not load movies: {error}
               </div>
             ) : (
-              <div className='mdbTableLoading' role='status' aria-live='polite'>
-                <span className='mdbSpinner' aria-hidden='true' />
-                Loading movie data…
-              </div>
+              null
             )
           ) : (
             <div className='mdbTableWrap'>
@@ -555,6 +552,16 @@ const Movies = () => {
           )}
         </section>
       </div>
+      {(!table || !detailsReady) &&
+        !error &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div className='mdbTableLoading' role='status' aria-live='polite'>
+            <span className='mdbSpinner' aria-hidden='true' />
+            Loading movie data…
+          </div>,
+          document.body
+        )}
       {mapLocations &&
         typeof document !== 'undefined' &&
         createPortal(
