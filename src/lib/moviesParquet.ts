@@ -3,6 +3,7 @@ import type { AsyncBuffer, FileMetaData } from 'hyparquet';
 import { compressors } from 'hyparquet-compressors';
 
 import type { RawColumns } from './movies';
+import { parquetByteLength } from './parquetRange';
 
 export interface MoviesSource {
   file: AsyncBuffer;
@@ -11,7 +12,8 @@ export interface MoviesSource {
 }
 
 export async function openMovies(url: string): Promise<MoviesSource> {
-  const remoteFile = await asyncBufferFromUrl({ url });
+  const byteLength = await parquetByteLength(url);
+  const remoteFile = await asyncBufferFromUrl({ url, byteLength });
   const file = cachedAsyncBuffer(remoteFile, { minSize: 64 * 1024 });
   const metadata = await parquetMetadataAsync(file);
   return { file, metadata, count: Number(metadata.num_rows) };
