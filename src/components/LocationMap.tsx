@@ -13,16 +13,18 @@ const markerIcon = L.divIcon({
   popupAnchor: [0, -36],
 });
 
+const CONTINENT_ZOOM = 4;
+
 function FitMarkers({ locations }: { locations: GeocodedLocation[] }) {
   const map = useMap();
 
   useEffect(() => {
     if (locations.length === 1) {
-      map.setView([locations[0].lat, locations[0].lon], 11);
+      map.setView([locations[0].lat, locations[0].lon], CONTINENT_ZOOM);
     } else if (locations.length > 1) {
       map.fitBounds(
         locations.map(({ lat, lon }) => [lat, lon] as [number, number]),
-        { padding: [32, 32], maxZoom: 11 }
+        { padding: [32, 32], maxZoom: CONTINENT_ZOOM }
       );
     }
   }, [locations, map]);
@@ -78,7 +80,7 @@ export default function LocationMap({ locations }: { locations: string[] }) {
 
   return (
     <div className='mdbMapContent'>
-      <MapContainer center={center} zoom={2} scrollWheelZoom className='mdbMap'>
+      <MapContainer center={center} zoom={CONTINENT_ZOOM} scrollWheelZoom className='mdbMap'>
         <TileLayer
           className='mdbMapTiles'
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

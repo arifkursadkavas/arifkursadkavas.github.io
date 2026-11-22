@@ -130,14 +130,33 @@ const Movies = () => {
   const [mapAnchor, setMapAnchor] = useState<{ x: number; y: number } | null>(null);
   const [mapOrigin, setMapOrigin] = useState<{ x: number; y: number } | null>(null);
   const mapDialogRef = useRef<HTMLElement | null>(null);
+  const mapCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (mapCloseTimer.current) clearTimeout(mapCloseTimer.current);
+    },
+    []
+  );
 
   const openMap = (locations: string[], anchor: { x: number; y: number }) => {
+    if (mapCloseTimer.current) clearTimeout(mapCloseTimer.current);
+    mapCloseTimer.current = null;
     setMapClosing(false);
     setMapAnchor(anchor);
     setMapOrigin(null);
     setMapLocations(locations);
   };
-  const closeMap = () => setMapClosing(true);
+  const finishClosingMap = () => {
+    if (mapCloseTimer.current) clearTimeout(mapCloseTimer.current);
+    mapCloseTimer.current = null;
+    setMapLocations(null);
+  };
+  const closeMap = () => {
+    setMapClosing(true);
+    if (mapCloseTimer.current) clearTimeout(mapCloseTimer.current);
+    mapCloseTimer.current = setTimeout(finishClosingMap, 220);
+  };
 
   useLayoutEffect(() => {
     const dialog = mapDialogRef.current;
@@ -492,7 +511,7 @@ const Movies = () => {
             className={`mdbMapBackdrop${mapClosing ? ' isClosing' : ''}`}
             onAnimationEnd={(event) => {
               if (event.target === event.currentTarget && event.animationName === 'mdbMapFadeOut') {
-                setMapLocations(null);
+                finishClosingMap();
               }
             }}
             onMouseDown={(event) => {
@@ -518,7 +537,7 @@ const Movies = () => {
                   Close
                 </button>
               </div>
-              <LocationMap locations={mapLocations} />
+              <LocationMap key={JSON.stringify(mapLocations)} locations={mapLocations} />
             </section>
           </div>,
           document.body
