@@ -82,8 +82,6 @@ export const BASE_COLUMNS = [
   'release_date',
   'movie_link',
   'genres',
-  'languages',
-  'countries_origin',
 ];
 
 /**
