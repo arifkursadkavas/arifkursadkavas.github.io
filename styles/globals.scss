@@ -41,15 +41,45 @@ body {
 .aboutContainer {
   @include card-background-color;
   border-radius: 1em;
-  //box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border: 1px solid #cecdce;
   transition: 0.3s;
   height: fit-content;
   margin: auto;
   padding: 2em;
   font-size: 1em;
+  color: #2b2d3b;
+
+  h1 {
+    margin: 0 0 0.8em;
+    color: #23265a;
+  }
+
+  h2 {
+    margin: 1.5em 0 0.8em;
+    padding-bottom: 0.6em;
+    font-size: 0.75em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b6f80;
+    border-bottom: 1px solid #ececf1;
+  }
+
+  h3 {
+    margin: 0.8em 0 0;
+    font-size: 0.9em;
+    color: #6b6f80;
+  }
+
+  p {
+    line-height: 1.7;
+  }
 
   &>a {
     text-decoration: none;
+  }
+
+  a {
+    color: #4e5bf9;
   }
 }
 
