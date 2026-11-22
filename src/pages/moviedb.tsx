@@ -205,30 +205,11 @@ const Movies = () => {
         if (cancelled) return;
         source.current = src;
         setTable(buildTable(src.count, raw));
-        // Load the default filter values only when the browser is idle, one column at a time.
-        const loadIdleColumns = () => {
-          if (cancelled) return;
-          void (async () => {
-            await ensureColumn('stars');
-            if (!cancelled) await ensureColumn('filming_locations');
-          })();
-        };
-        const idleWindow = window as Window & {
-          requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
-          cancelIdleCallback?: (handle: number) => void;
-        };
-        if (idleWindow.requestIdleCallback) {
-          const idleId = idleWindow.requestIdleCallback(loadIdleColumns, { timeout: 1500 });
-          return () => {
-            cancelled = true;
-            idleWindow.cancelIdleCallback?.(idleId);
-          };
-        }
-        const timerId = window.setTimeout(loadIdleColumns, 500);
-        return () => {
-          cancelled = true;
-          window.clearTimeout(timerId);
-        };
+        void Promise.all([
+          ensureColumn('directors'),
+          ensureColumn('stars'),
+          ensureColumn('filming_locations'),
+        ]);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
       }
