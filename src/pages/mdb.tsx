@@ -403,29 +403,38 @@ const Movies = () => {
                 )}
                 {sorted.slice(0, shown).map((i) => (
                   <tr key={table.id[i]}>
-                    {TABLE_COLUMNS.map(({ key, numeric }) => (
-                      <td key={key} className={cellClass(key, numeric, sort.key === key)}>
-                        {key === 'filming_locations' && table.locations?.[i] ? (
-                          <button
-                            type='button'
-                            className='mdbLocationButton'
-                            onClick={() =>
-                              setMapLocations(
-                                table.locations![i]
-                                  .split(';')
-                                  .map((location) => location.trim())
-                                  .filter(Boolean)
-                              )
-                            }
-                            aria-label={`Show map for filming locations: ${table.locations[i]}`}
-                          >
-                            {longText(table.locations[i])}
-                          </button>
-                        ) : (
-                          renderCell(table, key, i)
-                        )}
-                      </td>
-                    ))}
+                    {TABLE_COLUMNS.map(({ key, numeric }) => {
+                      const locations =
+                        key === 'filming_locations'
+                          ? table.locations?.[i]
+                              ?.split(';')
+                              .map((location) => location.trim())
+                              .filter(Boolean)
+                          : null;
+
+                      return (
+                        <td key={key} className={cellClass(key, numeric, sort.key === key)}>
+                          {locations?.length ? (
+                            <div className='mdbLocations'>
+                              {locations.map((location, index) => (
+                                <button
+                                  type='button'
+                                  className='mdbLocationButton'
+                                  key={`${location}:${index}`}
+                                  onClick={() => setMapLocations([location])}
+                                  aria-label={`Show map for filming location: ${location}`}
+                                  title={location}
+                                >
+                                  {location}
+                                </button>
+                              ))}
+                            </div>
+                          ) : (
+                            renderCell(table, key, i)
+                          )}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>
