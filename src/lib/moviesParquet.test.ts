@@ -15,11 +15,36 @@ describe('parquetByteLength', () => {
     });
   });
 
-  test('rejects a response without a valid range size', async () => {
-    const fetcher = jest.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(null, { status: 200 }));
+  test('falls back to Content-Length when the server ignores the range request', async () => {
+    const fetcher = jest.fn(async (_input: RequestInfo | URL, _init?: RequestInit) =>
+      new Response(null, {
+        status: 200,
+        headers: { 'Content-Length': '38855536' },
+      })
+    );
+
+    await expect(parquetByteLength('/movies.parquet', fetcher)).resolves.toBe(38855536);
+  });
+
+  test('falls back to a HEAD request when no length is available', async () => {
+    const fetcher = jest.fn(async (_input: RequestInfo | URL, init?: RequestInit) => {
+      if (init?.method === 'HEAD') {
+        return new Response(null, {
+          status: 200,
+          headers: { 'Content-Length': '38855536' },
+        });
+      }
+      return new Response(null, { status: 200 });
+    });
+
+    await expect(parquetByteLength('/movies.parquet', fetcher)).resolves.toBe(38855536);
+  });
+
+  test('rejects a response without any valid size', async () => {
+    const fetcher = jest.fn(async () => new Response(null, { status: 200 }));
 
     await expect(parquetByteLength('/movies.parquet', fetcher)).rejects.toThrow(
-      'expected a range response, got 200'
+      'could not determine parquet size'
     );
   });
 });
