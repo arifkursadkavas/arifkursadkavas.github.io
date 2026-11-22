@@ -184,17 +184,31 @@ const Movies = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [mapLocations]);
 
-  const ensureColumn = useCallback(async (column: ListColumn) => {
-    if (!source.current || pending.current.has(column)) return;
-    pending.current.add(column);
+  const ensureColumns = useCallback(async (columns: ListColumn[]) => {
+    if (!source.current) return;
+    const columnsToLoad = columns.filter((column) => !pending.current.has(column));
+    if (columnsToLoad.length === 0) return;
+    columnsToLoad.forEach((column) => pending.current.add(column));
     try {
-      const raw = await readColumns(source.current, [column]);
-      setTable((t) => (t ? addListColumn(t, column, raw[column]) : t));
+      const raw = await readColumns(source.current, columnsToLoad);
+      setTable((table) =>
+        table
+          ? columnsToLoad.reduce(
+              (updatedTable, column) => addListColumn(updatedTable, column, raw[column]),
+              table
+            )
+          : table
+      );
     } catch (e) {
-      pending.current.delete(column);
+      columnsToLoad.forEach((column) => pending.current.delete(column));
       setError(e instanceof Error ? e.message : String(e));
     }
   }, []);
+
+  const ensureColumn = useCallback(
+    (column: ListColumn) => ensureColumns([column]),
+    [ensureColumns]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -205,11 +219,7 @@ const Movies = () => {
         if (cancelled) return;
         source.current = src;
         setTable(buildTable(src.count, raw));
-        void Promise.all([
-          ensureColumn('directors'),
-          ensureColumn('stars'),
-          ensureColumn('filming_locations'),
-        ]);
+        void ensureColumns(['directors', 'stars', 'filming_locations']);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e));
       }
@@ -217,7 +227,7 @@ const Movies = () => {
     return () => {
       cancelled = true;
     };
-  }, [ensureColumn]);
+  }, [ensureColumns]);
 
   const update = (patch: Partial<Criteria>) => {
     setCriteria((c) => ({ ...c, ...patch }));
